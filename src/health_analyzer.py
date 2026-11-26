@@ -105,3 +105,62 @@ class HealthAnalyzer:
         fig.tight_layout()
 
         return fig
+
+    def plot_disease_by_sex(self):
+        """
+        Skapa barchat med disease efter kön
+        """
+
+        # Beräkna andelen med sjukdom per kön
+        disease_percentage = self.df.groupby("sex")["disease"].mean() * 100
+
+        # Välj ordning på grupperna
+        disease_percentage = disease_percentage.reindex(["F", "M"])
+
+        # Skapa stapeldiagram
+        fig, ax = plt.subplots(figsize=(8, 5))
+
+        bars = ax.bar(["Female (F)", "Male (M)"], disease_percentage.values)
+
+        # Visa procent ovanför staplarna
+        ax.bar_label(bars, fmt="%.2f%%", padding=3)
+
+        ax.set_title("Disease Prevalence by Sex")
+        ax.set_xlabel("Sex")
+        ax.set_ylabel("Disease Prevalence (%)")
+        ax.set_ylim(0, disease_percentage.max() * 1.2)
+
+        fig.tight_layout()
+
+        return fig
+
+    def plot_cholesterol_vs_bp(self):
+        """
+        Skapa a scatter plot av kolesterol och bp
+        """
+
+        # Beräkna korrelationen
+        correlation = self.df["cholesterol"].corr(self.df["systolic_bp"])
+
+        # Skapa scatter plot
+        fig, ax = plt.subplots(figsize=(9, 6))
+
+        ax.scatter(self.df["cholesterol"], self.df["systolic_bp"], alpha=0.4)
+
+        ax.set_title("Cholesterol vs Systolic Blood Pressure")
+        ax.set_xlabel("Cholesterol (mmol/L)")
+        ax.set_ylabel("Systolic Blood Pressure (mmHg)")
+
+        # Visa korrelationen i grafen
+        ax.text(
+            0.05,
+            0.95,
+            f"Pearson r = {correlation:.4f}",
+            transform=ax.transAxes,
+            va="top",
+        )
+
+        ax.grid(alpha=0.3)
+        fig.tight_layout()
+
+        return fig
